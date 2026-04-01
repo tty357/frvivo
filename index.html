@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FrançaisVivo">
+<title>FrançaisVivo</title>
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f1a;
+    --bg2: #151829;
+    --bg3: #1e2138;
+    --card: #1e2138;
+    --accent: #f7a44a;
+    --accent2: #e8637a;
+    --green: #4ecb8d;
+    --blue: #5b9cf6;
+    --purple: #9b7ff5;
+    --text: #f0eefc;
+    --muted: #8b8fa8;
+    --border: rgba(255,255,255,0.08);
+    --radius: 18px;
+    --radius-sm: 12px;
+    --safe-top: env(safe-area-inset-top, 44px);
+    --safe-bottom: env(safe-area-inset-bottom, 34px);
+    --tab-height: 83px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%; overflow: hidden;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== APP SHELL ===== */
+  .app-shell {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    height: 100dvh;
+  }
+
+  /* ===== STATUS BAR AREA ===== */
+  .status-bar-spacer {
+    height: var(--safe-top);
+    background: var(--bg2);
+    flex-shrink: 0;
+  }
+
+  /* ===== HEADER ===== */
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px 12px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .logo {
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--accent); }
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .xp-pill {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(247,164,74,0.15);
+    border: 1px solid rgba(247,164,74,0.3);
+    padding: 5px 10px; border-radius: 20px;
+  }
+  .xp-bar-mini { width: 50px; height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .xp-fill-mini { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 3px; transition: width 0.5s; }
+  .xp-text { font-size: 12px; font-weight: 700; color: var(--accent); }
+  .streak-pill {
+    display: flex; align-items: center; gap: 4px;
+    background: var(--bg3); padding: 5px 10px; border-radius: 20px;
+    font-size: 13px; font-weight: 700; color: var(--accent);
+  }
+
+  /* ===== SCROLL AREA ===== */
+  .app-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 0 0 calc(var(--tab-height) + 8px);
+  }
+
+  /* ===== SECTIONS ===== */
+  .section { display: none; padding: 16px 16px 0; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+  .section-sub { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+
+  /* ===== HOME ===== */
+  .hero-card {
+    background: linear-gradient(135deg, #2a1f4a, #1e2b4a);
+    border: 1px solid rgba(155,127,245,0.3);
+    border-radius: 22px;
+    padding: 22px 20px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-card::after {
+    content: '🇫🇷';
+    position: absolute;
+    right: 16px; top: 14px;
+    font-size: 44px;
+    opacity: 0.35;
+  }
+  .hero-card h1 {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 5px;
+    line-height: 1.2;
+  }
+  .hero-card p { color: var(--muted); font-size: 14px; line-height: 1.5; max-width: 240px; }
+  .hero-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    margin-top: 14px; padding: 12px 20px;
+    background: var(--accent); color: #1a1200;
+    font-weight: 800; font-size: 14px;
+    border-radius: 14px; border: none; cursor: pointer;
+    -webkit-appearance: none;
+    transition: transform 0.1s;
+    font-family: 'Nunito', sans-serif;
+  }
+  .hero-btn:active { transform: scale(0.96); }
+
+  .modules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .module-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 16px 14px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.1s;
+    -webkit-appearance: none;
+    min-height: 110px;
+  }
+  .module-card:active { transform: scale(0.97); }
+  .module-card .m-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+  .module-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+  .module-card p { font-size: 11px; color: var(--muted); line-height: 1.4; }
+  .tag {
+    position: absolute; top: 10px; right: 10px;
+    font-size: 9px; font-weight: 700; padding: 2px 6px;
+    border-radius: 5px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .tag-new { background: rgba(78,203,141,0.2); color: var(--green); }
+  .tag-hot { background: rgba(232,99,122,0.2); color: var(--accent2); }
+
+  /* ===== LEVEL PATH (HOME) ===== */
+  .level-path-card {
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 16px; margin-bottom: 16px;
+  }
+  .level-path-title { font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+  .path-row {
+    display: flex; align-items: center; gap: 0;
+    overflow-x: auto; padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .path-node { text-align: center; flex-shrink: 0; }
+  .path-circle {
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 12px; margin: 0 auto 4px;
+  }
+  .path-label { font-size: 10px; }
+  .path-line { flex: 1; height: 3px; min-width: 20px; }
+
+  /* ===== VOCAB ===== */
+  .cat-scroll {
+    display: flex; gap: 8px; overflow-x: auto;
+    padding-bottom: 8px; margin-bottom: 14px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .cat-scroll::-webkit-scrollbar { display: none; }
+  .cat-pill {
+    flex-shrink: 0;
+    padding: 7px 14px; border-radius: 20px; font-size: 13px;
+    cursor: pointer; transition: all 0.15s;
+    border: 1px solid var(--border); color: var(--muted); background: none;
+    font-family: 'Nunito', sans-serif; white-space: nowrap;
+    -webkit-appearance: none;
+  }
+  .cat-pill.active { background: var(--accent); color: #1a1200; border-color: var(--accent); font-weight: 700; }
+
+  .flashcard-area { padding: 0 4px; margin-bottom: 16px; }
+  .flashcard-wrap { perspective: 1000px; width: 100%; margin-bottom: 14px; }
+  .flashcard {
+    width: 100%; height: 200px;
+    position: relative; transform-style: preserve-3d;
+    transition: transform 0.45s ease; cursor: pointer;
+    border-radius: 22px;
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    background: var(--card); border-radius: 22px;
+    border: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .card-back { transform: rotateY(180deg); }
+  .card-face .word { font-size: 34px; font-weight: 800; color: var(--accent); text-align: center; }
+  .card-face .card-lv { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-top: 3px; }
+  .card-face .hint { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .card-face .translation { font-size: 20px; font-weight: 700; color: var(--green); text-align: center; }
+  .card-face .example { font-size: 12px; color: var(--muted); margin-top: 8px; font-style: italic; text-align: center; line-height: 1.5; }
+
+  .card-actions { display: flex; justify-content: center; gap: 10px; margin-bottom: 12px; }
+  .card-btn {
+    flex: 1; max-width: 110px;
+    padding: 12px 8px; border-radius: 14px; border: none;
+    font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px;
+    cursor: pointer; transition: transform 0.1s;
+    -webkit-appearance: none;
+  }
+  .card-btn:active { transform: scale(0.95); }
+  .btn-hard { background: rgba(232,99,122,0.2); color: var(--accent2); }
+  .btn-ok { background: rgba(91,156,246,0.2); color: var(--blue); }
+  .btn-easy { background: rgba(78,203,141,0.2); color: var(--green); }
+
+  .card-bottom-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 8px;
+  }
+  .card-counter { font-size: 12px; color: var(--muted); }
+  .card-audio-btns { display: flex; gap: 8px; }
+  .icon-btn {
+    width: 38px; height: 38px; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--bg3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; cursor: pointer; -webkit-appearance: none;
+    transition: transform 0.1s;
+  }
+  .icon-btn:active { transform: scale(0.92); }
+
+  /* AI Mode Panel */
+  .ai-mode-panel {
+    background: rgba(155,127,245,0.1); border: 1px solid rgba(155,127,245,0.3);
+    border-radius: var(--radius); padding: 14px; margin-bottom: 14px;
+  }
+  .ai-mode-panel .ai-title { font-size: 13px; color: var(--purple); font-weight: 700; margin-bottom: 10px; }
+  .ai-selects { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+  .ai-selects select {
+    background: var(--bg3); border: 1px solid var(--border); color: var(--text);
+    border-radius: 10px; padding: 10px 12px;
+    font-family: 'Nunito', sans-serif; font-size: 14px;
+    -webkit-appearance: none; width: 100%;
+  }
+  .ai-gen-btn {
+    width: 100%; padding: 12px; border-radius: 12px;
+    background: var(--purple); border: none; color: white;
+    font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px;
+    cursor: pointer; -webkit-appearance: none;
+    transition: transform 0.1s;
+  }
+  .ai-gen-btn:active { transform: scale(0.97); }
+
+  /* ===== CONVERSATION ===== */
+  .scenario-scroll {
+    display: flex; gap: 8px; overflow-x: auto;
+    padding-bottom: 8px; margin-bottom: 12px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .scenario-scroll::-webkit-scrollbar { display: none; }
+  .scenario-chip {
+    flex-shrink: 0;
+    font-size: 12px; padding: 7px 12px; border-radius: 20px;
+    background: var(--bg3); border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer;
+    font-family: 'Nunito', sans-serif; white-space: nowrap;
+    -webkit-appearance: none;
+  }
+  .scenario-chip.active { background: rgba(155,127,245,0.2); border-color: var(--purple); color: var(--purple); font-weight: 700; }
+
+  .chat-messages {
+    background: var(--bg3); border-radius: var(--radius);
+    height: 340px; overflow-y: auto;
+    padding: 14px; margin-bottom: 10px;
+    display: flex; flex-direction: column; gap: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .msg { display: flex; gap: 8px; align-items: flex-end; }
+  .msg.user { flex-direction: row-reverse; }
+  .msg-avatar {
+    width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; background: var(--bg2);
+  }
+  .msg-bubble {
+    max-width: 78%; padding: 10px 13px; font-size: 14px; line-height: 1.55;
+  }
+  .msg.ai .msg-bubble {
+    background: var(--bg2); border-radius: 16px 16px 16px 4px; color: var(--text);
+  }
+  .msg.user .msg-bubble {
+    background: rgba(247,164,74,0.2); border-radius: 16px 16px 4px 16px; color: var(--text);
+  }
+  .msg-correction {
+    font-size: 11px; color: var(--green); margin-top: 5px;
+    padding: 5px 8px; background: rgba(78,203,141,0.1);
+    border-radius: 7px; border-left: 2px solid var(--green);
+  }
+
+  .quick-options {
+    display: flex; gap: 7px; overflow-x: auto;
+    padding-bottom: 6px; margin-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .quick-options::-webkit-scrollbar { display: none; }
+  .quick-opt {
+    flex-shrink: 0; font-size: 12px; padding: 7px 11px;
+    border-radius: 10px; border: 1px solid var(--border);
+    background: var(--bg3); color: var(--text);
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    white-space: nowrap; -webkit-appearance: none;
+    transition: border-color 0.15s;
+  }
+  .quick-opt:active { border-color: var(--accent); color: var(--accent); }
+
+  .chat-input-bar {
+    display: flex; gap: 8px; align-items: flex-end;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 6px 6px 6px 12px;
+    margin-bottom: 6px;
+  }
+  .chat-input {
+    flex: 1; background: transparent; border: none;
+    color: var(--text); font-family: 'Nunito', sans-serif; font-size: 15px;
+    resize: none; min-height: 34px; max-height: 100px;
+    outline: none; line-height: 1.5; padding-top: 4px;
+  }
+  .chat-input::placeholder { color: var(--muted); }
+  .chat-send-btn {
+    width: 36px; height: 36px; border-radius: 12px;
+    background: var(--accent); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0; -webkit-appearance: none;
+    transition: transform 0.1s;
+  }
+  .chat-send-btn:active { transform: scale(0.92); }
+  .chat-mic-btn {
+    width: 36px; height: 36px; border-radius: 12px;
+    background: var(--bg3); border: 1px solid var(--border);
+    cursor: pointer; display: flex; align-items: center;
+    justify-content: center; font-size: 16px; flex-shrink: 0;
+    -webkit-appearance: none; transition: all 0.2s;
+  }
+  .chat-mic-btn.recording {
+    background: rgba(232,99,122,0.2); border-color: var(--accent2);
+    animation: pulse 1s infinite;
+  }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(232,99,122,0.4);} 50%{box-shadow:0 0 0 7px rgba(232,99,122,0);} }
+  .api-note { font-size: 11px; color: var(--muted); text-align: center; margin-top: 2px; }
+
+  /* ===== PRONUNCIATION ===== */
+  .pronun-main-card {
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 18px; margin-bottom: 14px;
+  }
+  .pronun-word-big { font-size: 36px; font-weight: 800; color: var(--accent); margin-bottom: 2px; }
+  .pronun-ipa { font-size: 14px; color: var(--muted); margin-bottom: 10px; }
+  .pronun-tip {
+    font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 14px;
+    background: rgba(155,127,245,0.08); border-radius: 10px; padding: 10px 12px;
+    border-left: 3px solid rgba(155,127,245,0.4);
+  }
+  .phoneme-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .phoneme {
+    background: var(--bg3); border-radius: 10px; padding: 9px 14px;
+    font-size: 16px; font-weight: 600; border: 1px solid var(--border);
+    cursor: pointer; -webkit-appearance: none; transition: all 0.15s;
+  }
+  .phoneme:active { border-color: var(--blue); color: var(--blue); transform: scale(0.95); }
+
+  .pronun-btns { display: flex; gap: 10px; margin-bottom: 14px; }
+  .speak-btn, .record-btn {
+    flex: 1; padding: 12px 8px; border-radius: 14px;
+    font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px;
+    cursor: pointer; -webkit-appearance: none;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: transform 0.1s;
+  }
+  .speak-btn { background: rgba(91,156,246,0.2); border: 1px solid rgba(91,156,246,0.4); color: var(--blue); }
+  .record-btn { background: rgba(232,99,122,0.2); border: 1px solid rgba(232,99,122,0.4); color: var(--accent2); }
+  .record-btn.on { background: rgba(232,99,122,0.35); animation: pulse 1s infinite; }
+  .speak-btn:active, .record-btn:active { transform: scale(0.96); }
+
+  .waveform {
+    height: 44px; background: var(--bg3); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 3px;
+    overflow: hidden; margin-bottom: 10px;
+  }
+  .wave-bar { width: 3px; border-radius: 2px; background: var(--blue); transition: height 0.1s; }
+  .score-box {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; background: var(--bg3); border-radius: 12px;
+  }
+  .score-num { font-size: 28px; font-weight: 800; font-family: 'Nunito', sans-serif; }
+  .score-lbl { font-size: 12px; color: var(--muted); }
+
+  /* ===== GRAMMAR ===== */
+  .grammar-card {
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 18px; margin-bottom: 14px;
+  }
+  .grammar-card h2 { font-size: 18px; font-weight: 800; margin-bottom: 2px; }
+  .grammar-sub { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .rule-box {
+    background: rgba(155,127,245,0.1); border: 1px solid rgba(155,127,245,0.3);
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;
+    font-size: 13px; line-height: 1.7;
+  }
+  .rule-box em { color: var(--accent); font-style: normal; font-weight: 700; }
+  .examples-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .examples-list li {
+    background: var(--bg3); border-radius: 10px; padding: 10px 12px;
+    font-size: 13px; border-left: 3px solid var(--green);
+    line-height: 1.5;
+  }
+  .examples-list li span { color: var(--muted); font-size: 11px; display: block; margin-top: 2px; }
+
+  .fill-blank { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
+  .blank-question { font-size: 15px; line-height: 2; }
+  .blank-input {
+    display: inline-block; min-width: 70px; border: none;
+    border-bottom: 2px solid var(--accent); background: transparent;
+    color: var(--text); font-family: 'Nunito', sans-serif; font-size: 15px;
+    outline: none; padding: 0 6px; text-align: center;
+    -webkit-appearance: none;
+  }
+  .blank-input.correct { border-color: var(--green); color: var(--green); }
+  .blank-input.wrong { border-color: var(--accent2); color: var(--accent2); }
+  .check-btn {
+    width: 100%; padding: 14px; border-radius: 14px;
+    background: var(--purple); border: none; color: white;
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 15px;
+    cursor: pointer; -webkit-appearance: none; transition: transform 0.1s;
+  }
+  .check-btn:active { transform: scale(0.97); }
+  .grammar-result { margin-top: 10px; font-size: 14px; text-align: center; }
+
+  /* ===== READING ===== */
+  .reading-card {
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 18px; margin-bottom: 14px;
+  }
+  .reading-level-badge {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--accent); font-weight: 700; margin-bottom: 6px;
+  }
+  .reading-title-text { font-size: 20px; font-weight: 800; margin-bottom: 14px; letter-spacing: -0.3px; }
+  .reading-body { font-size: 15px; line-height: 1.9; color: #d0ceea; }
+  .reading-body .highlight {
+    background: rgba(247,164,74,0.2); color: var(--accent);
+    border-radius: 4px; padding: 1px 3px; cursor: pointer;
+  }
+  .reading-btns { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .read-btn {
+    flex: 1; min-width: 120px;
+    padding: 12px 10px; border-radius: 14px;
+    font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px;
+    cursor: pointer; -webkit-appearance: none;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: transform 0.1s;
+  }
+  .read-btn:active { transform: scale(0.96); }
+  .read-btn-green { background: rgba(78,203,141,0.15); border: 1px solid rgba(78,203,141,0.3); color: var(--green); }
+  .read-btn-purple { background: rgba(155,127,245,0.15); border: 1px solid rgba(155,127,245,0.3); color: var(--purple); }
+  .quiz-section { margin-top: 16px; }
+  .quiz-q { font-size: 15px; font-weight: 700; margin-bottom: 12px; line-height: 1.4; }
+  .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    padding: 13px 14px; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--bg3);
+    cursor: pointer; font-size: 14px; font-family: 'Nunito', sans-serif;
+    text-align: left; -webkit-appearance: none; transition: all 0.15s;
+  }
+  .quiz-opt:active { opacity: 0.8; }
+  .quiz-opt.correct { border-color: var(--green); background: rgba(78,203,141,0.15); color: var(--green); }
+  .quiz-opt.wrong { border-color: var(--accent2); background: rgba(232,99,122,0.15); color: var(--accent2); }
+  .quiz-feedback { margin-top: 10px; font-size: 14px; text-align: center; }
+
+  /* ===== PROGRESS ===== */
+  .stats-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 16px;
+  }
+  .stat-card {
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 16px; text-align: center;
+  }
+  .stat-num { font-size: 30px; font-weight: 800; }
+  .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .skills-section-title { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+  .skill-row {
+    background: var(--card); border-radius: 12px;
+    border: 1px solid var(--border); padding: 13px 14px; margin-bottom: 8px;
+  }
+  .skill-header { display: flex; justify-content: space-between; margin-bottom: 7px; font-size: 13px; font-weight: 600; }
+  .skill-pct { color: var(--muted); }
+  .skill-bar { height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .skill-fill { height: 100%; border-radius: 3px; }
+
+  /* ===== BOTTOM TAB BAR ===== */
+  .tab-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(21, 24, 41, 0.95);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding-bottom: var(--safe-bottom);
+    z-index: 100;
+  }
+  .tab-btn {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 10px 4px 6px; gap: 3px;
+    border: none; background: none;
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    color: var(--muted); font-size: 10px; font-weight: 600;
+    transition: color 0.15s; -webkit-appearance: none;
+    min-height: 49px;
+  }
+  .tab-btn .t-icon { font-size: 22px; line-height: 1; transition: transform 0.15s; }
+  .tab-btn.active { color: var(--accent); }
+  .tab-btn.active .t-icon { transform: scale(1.1); }
+
+  /* ===== LOADING DOTS ===== */
+  .loading-dots { display: flex; gap: 5px; align-items: center; padding: 6px 0; }
+  .loading-dots span {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--muted);
+    animation: bounce 1.4s ease-in-out infinite;
+  }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,80%,100%{transform:scale(0.8);opacity:0.4;} 40%{transform:scale(1.2);opacity:1;} }
+
+  /* ===== TOOLTIP ===== */
+  .tooltip-popup {
+    position: fixed; background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px; font-size: 13px; z-index: 999;
+    max-width: 210px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); display: none;
+  }
+  .tip-word { font-weight: 800; color: var(--accent); font-size: 15px; margin-bottom: 3px; }
+  .tip-trans { color: var(--green); font-size: 13px; }
+  .tip-ex { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* AI mode toggle btn */
+  .ai-toggle-btn {
+    padding: 8px 14px; border-radius: 12px;
+    background: rgba(155,127,245,0.15); border: 1px solid rgba(155,127,245,0.3);
+    color: var(--purple); font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px;
+    cursor: pointer; -webkit-appearance: none; margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <div class="status-bar-spacer"></div>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="logo">Français<span>Vivo</span></div>
+    <div class="header-right">
+      <div class="xp-pill">
+        <div class="xp-bar-mini"><div class="xp-fill-mini" id="xpFill" style="width:38%"></div></div>
+        <span class="xp-text" id="xpNum">380</span>
+      </div>
+      <div class="streak-pill">🔥 <span id="streakNum">3</span></div>
+    </div>
+  </header>
+
+  <!-- SCROLL CONTENT -->
+  <div class="app-content">
+
+    <!-- HOME -->
+    <div class="section active" id="section-home">
+      <div class="hero-card">
+        <h1>Bienvenue, ¡Hola! 👋</h1>
+        <p>Tu as fait <strong>3 jours</strong> d'affilée — continue pour atteindre le B2 !</p>
+        <button class="hero-btn" onclick="showSection('convo')">▶ Leçon du jour</button>
+      </div>
+
+      <div class="modules-grid">
+        <div class="module-card" onclick="showSection('vocab')">
+          <span class="m-icon">📚</span>
+          <h3>Vocabulaire</h3>
+          <p>Cartes mémoire & répétition espacée</p>
+          <span class="tag tag-new">Nouveau</span>
+        </div>
+        <div class="module-card" onclick="showSection('convo')">
+          <span class="m-icon">🤖</span>
+          <h3>IA Chat</h3>
+          <p>Dialogues en temps réel</p>
+          <span class="tag tag-hot">Populaire</span>
+        </div>
+        <div class="module-card" onclick="showSection('pronun')">
+          <span class="m-icon">🎙️</span>
+          <h3>Prononciation</h3>
+          <p>Enregistre & compare</p>
+        </div>
+        <div class="module-card" onclick="showSection('grammar')">
+          <span class="m-icon">✏️</span>
+          <h3>Grammaire</h3>
+          <p>Règles & exercices</p>
+        </div>
+        <div class="module-card" onclick="showSection('reading')">
+          <span class="m-icon">📖</span>
+          <h3>Lecture</h3>
+          <p>Textes adaptés</p>
+        </div>
+        <div class="module-card" onclick="showSection('progress')">
+          <span class="m-icon">📊</span>
+          <h3>Progrès</h3>
+          <p>Chemin vers le B2</p>
+        </div>
+      </div>
+
+      <div class="level-path-card">
+        <div class="level-path-title">🗺️ Chemin vers le B2</div>
+        <div class="path-row">
+          <div class="path-node">
+            <div class="path-circle" style="background:var(--green); color:#fff; font-size:13px; font-weight:800;">A1</div>
+            <div class="path-label" style="color:var(--green)">✓ Fini</div>
+          </div>
+          <div class="path-line" style="background:var(--green)"></div>
+          <div class="path-node">
+            <div class="path-circle" style="background:var(--accent); color:#1a1200; font-size:13px; font-weight:800;">A2</div>
+            <div class="path-label" style="color:var(--accent)">En cours</div>
+          </div>
+          <div class="path-line" style="background:var(--bg3)"></div>
+          <div class="path-node">
+            <div class="path-circle" style="background:var(--bg3); border:2px solid var(--border); color:var(--muted); font-size:13px; font-weight:800;">B1</div>
+            <div class="path-label" style="color:var(--muted)">~3 mois</div>
+          </div>
+          <div class="path-line" style="background:var(--bg3)"></div>
+          <div class="path-node">
+            <div class="path-circle" style="background:var(--bg3); border:2px dashed var(--purple); color:var(--purple); font-size:13px; font-weight:800;">B2</div>
+            <div class="path-label" style="color:var(--purple)">🎯 But</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOCAB -->
+    <div class="section" id="section-vocab">
+      <div class="section-title">Vocabulaire</div>
+      <div class="section-sub">Clique sur la carte pour la traduction</div>
+      <button class="ai-toggle-btn" id="aiModeBtn" onclick="toggleAIMode()">✨ Mode IA</button>
+
+      <div id="aiModePanel" style="display:none">
+        <div class="ai-mode-panel">
+          <div class="ai-title">✨ Flashcards générées par l'IA</div>
+          <div class="ai-selects">
+            <select id="aiLevel">
+              <option value="A1">A1 — Débutant</option>
+              <option value="A2" selected>A2 — Élémentaire</option>
+              <option value="B1">B1 — Intermédiaire</option>
+              <option value="B2">B2 — Avancé</option>
+            </select>
+            <select id="aiTheme">
+              <option value="vie quotidienne">Vie quotidienne</option>
+              <option value="travail et bureau">Travail & bureau</option>
+              <option value="famille et relations">Famille & relations</option>
+              <option value="transports et logistique">Transports</option>
+              <option value="santé et corps">Santé & corps</option>
+              <option value="amour et sentiments">Amour & sentiments</option>
+              <option value="argent et banque">Argent & banque</option>
+              <option value="nourriture et cuisine">Nourriture & cuisine</option>
+              <option value="technologie">Technologie</option>
+              <option value="culture française">Culture française</option>
+            </select>
+          </div>
+          <button class="ai-gen-btn" onclick="generateAICards()">⚡ Générer 8 cartes</button>
+          <div id="aiCardsStatus" style="font-size:12px; color:var(--muted); margin-top:8px; text-align:center;"></div>
+        </div>
+      </div>
+
+      <div id="vocabCatsWrap">
+        <div class="cat-scroll" id="vocabCats">
+          <button class="cat-pill active" onclick="setVocabCat(this,'quotidien')">🏠 Quotidien</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'famille')">👨‍👩‍👧 Famille</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'travail')">💼 Travail</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'etudes')">🎓 Études</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'logistique')">🚇 Logistique</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'maison')">🏡 Maison</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'sante')">🏥 Santé</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'emotions')">💛 Émotions</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'amour')">❤️ Amour</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'courses')">🛒 Courses</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'cuisine')">🍽️ Cuisine</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'voyage')">✈️ Voyage</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'argent')">💶 Argent</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'technologie')">💻 Techno</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'temps')">🌦️ Météo</button>
+          <button class="cat-pill" onclick="setVocabCat(this,'adverbes')">📝 Adverbes</button>
+        </div>
+      </div>
+
+      <div class="flashcard-area">
+        <div class="flashcard-wrap">
+          <div class="flashcard" id="flashcard" onclick="flipCard()">
+            <div class="card-face card-front">
+              <div class="word" id="cardWord">bonjour</div>
+              <div class="card-lv" id="cardLevel">A1</div>
+              <div class="hint">Touche pour voir →</div>
+            </div>
+            <div class="card-face card-back">
+              <div class="translation" id="cardTrans">¡Hola!</div>
+              <div class="example" id="cardExample">"Bonjour !" — ¡Hola!</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="card-btn btn-hard" onclick="nextCard('hard')">😓 Difficile</button>
+          <button class="card-btn btn-ok" onclick="nextCard('ok')">👍 Bien</button>
+          <button class="card-btn btn-easy" onclick="nextCard('easy')">⭐ Facile</button>
+        </div>
+        <div class="card-bottom-row">
+          <div class="card-counter" id="cardCounter">Carte 1 / 8</div>
+          <div class="card-audio-btns">
+            <button class="icon-btn" onclick="speakWord()" title="Écouter le mot">🔊</button>
+            <button class="icon-btn" onclick="speakExample()" title="Écouter l'exemple">💬</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONVERSATION -->
+    <div class="section" id="section-convo">
+      <div class="section-title">Conversation IA</div>
+      <div class="section-sub">Discute et reçois des corrections</div>
+      <div class="scenario-scroll">
+        <button class="scenario-chip active" onclick="setScenario(this,'cafe')">☕ Au café</button>
+        <button class="scenario-chip" onclick="setScenario(this,'shopping')">🛍️ Shopping</button>
+        <button class="scenario-chip" onclick="setScenario(this,'médecin')">🏥 Médecin</button>
+        <button class="scenario-chip" onclick="setScenario(this,'voyage')">✈️ Voyage</button>
+        <button class="scenario-chip" onclick="setScenario(this,'libre')">💬 Libre</button>
+      </div>
+      <div class="chat-messages" id="chatContainer"></div>
+      <div class="quick-options" id="chatOptions"></div>
+      <div class="chat-input-bar">
+        <button class="chat-mic-btn" id="micBtn" onclick="toggleMic()">🎙️</button>
+        <textarea class="chat-input" id="chatInput" placeholder="Écris en français…" rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"></textarea>
+        <button class="chat-send-btn" onclick="sendMsg()">➤</button>
+      </div>
+      <div class="api-note" id="apiNote">💡 L'IA corrige tes erreurs en temps réel</div>
+    </div>
+
+    <!-- PRONUNCIATION -->
+    <div class="section" id="section-pronun">
+      <div class="section-title">Prononciation</div>
+      <div class="section-sub">Sons difficiles du français</div>
+      <div class="cat-scroll">
+        <button class="cat-pill active" onclick="setPronunWord(this,0)">Nasales</button>
+        <button class="cat-pill" onclick="setPronunWord(this,1)">Le "U"</button>
+        <button class="cat-pill" onclick="setPronunWord(this,2)">Le "R"</button>
+        <button class="cat-pill" onclick="setPronunWord(this,3)">Le "EU"</button>
+        <button class="cat-pill" onclick="setPronunWord(this,4)">Liaisons</button>
+      </div>
+      <div class="pronun-main-card">
+        <div class="pronun-word-big" id="pronunWord">on / an / un</div>
+        <div class="pronun-ipa" id="pronunIpa">[ɔ̃] [ɑ̃] [œ̃] — sons nasaux</div>
+        <div class="pronun-tip" id="pronunTip">💡 En espagnol il n'y a pas de voyelles nasales ! Air par le nez + bouche.</div>
+        <div class="phoneme-row" id="phonemeRow">
+          <div class="phoneme" onclick="speakPhoneme('bon')">bon</div>
+          <div class="phoneme" onclick="speakPhoneme('blanc')">blanc</div>
+          <div class="phoneme" onclick="speakPhoneme('un')">un</div>
+          <div class="phoneme" onclick="speakPhoneme('enfant')">enfant</div>
+          <div class="phoneme" onclick="speakPhoneme('chanson')">chanson</div>
+        </div>
+        <div class="pronun-btns">
+          <button class="speak-btn" onclick="speakPronunWord()">🔊 Écouter</button>
+          <button class="record-btn" id="recordBtn" onclick="toggleRecord()">🎙️ Enregistrer</button>
+        </div>
+        <div class="waveform" id="waveform">
+          <div class="wave-bar" style="height:10px"></div><div class="wave-bar" style="height:20px"></div>
+          <div class="wave-bar" style="height:35px"></div><div class="wave-bar" style="height:22px"></div>
+          <div class="wave-bar" style="height:40px"></div><div class="wave-bar" style="height:15px"></div>
+          <div class="wave-bar" style="height:28px"></div><div class="wave-bar" style="height:38px"></div>
+          <div class="wave-bar" style="height:12px"></div><div class="wave-bar" style="height:25px"></div>
+          <div class="wave-bar" style="height:42px"></div><div class="wave-bar" style="height:18px"></div>
+        </div>
+        <div class="score-box" id="scoreDisplay" style="display:none">
+          <div>
+            <div class="score-num" id="scoreNum" style="color:var(--green)">87%</div>
+            <div class="score-lbl">Score prononciation</div>
+          </div>
+          <div style="font-size:13px; color:var(--muted); flex:1;" id="scoreFeedback">Bien !</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRAMMAR -->
+    <div class="section" id="section-grammar">
+      <div class="section-title">Grammaire</div>
+      <div class="section-sub">Règles et exercices interactifs</div>
+      <div class="cat-scroll">
+        <button class="cat-pill active" onclick="setGrammarTopic(this,0)">Articles</button>
+        <button class="cat-pill" onclick="setGrammarTopic(this,1)">Passé composé</button>
+        <button class="cat-pill" onclick="setGrammarTopic(this,2)">Subjonctif</button>
+        <button class="cat-pill" onclick="setGrammarTopic(this,3)">Pronoms</button>
+      </div>
+      <div class="grammar-card" id="grammarCard">
+        <h2>Les Articles Définis et Indéfinis</h2>
+        <div class="grammar-sub">Une différence importante avec l'espagnol !</div>
+        <div class="rule-box">
+          En français : <em>le / la / les</em> (définis) et <em>un / une / des</em> (indéfinis).<br>
+          "La problema" en ES → <em>le problème</em> en FR (masculin !)
+        </div>
+        <ul class="examples-list" id="grammarExamples">
+          <li>Je veux <em style="color:var(--accent)">une</em> pomme. <span>Quiero una manzana.</span></li>
+          <li><em style="color:var(--accent)">Le</em> chat est mignon. <span>El gato es lindo.</span></li>
+          <li>J'aime <em style="color:var(--accent)">les</em> fleurs. <span>Me gustan las flores.</span></li>
+        </ul>
+        <div style="font-size:14px; font-weight:700; margin-bottom:10px;">🏋️ Exercice : complète</div>
+        <div class="fill-blank" id="fillBlank">
+          <div class="blank-question">1. J'ai vu <input class="blank-input" data-answer="un" placeholder="???"> chien dans le parc.</div>
+          <div class="blank-question">2. <input class="blank-input" data-answer="La" placeholder="???"> tour Eiffel est magnifique.</div>
+          <div class="blank-question">3. Elle mange <input class="blank-input" data-answer="des" placeholder="???"> croissants chaque matin.</div>
+          <div class="blank-question">4. <input class="blank-input" data-answer="Le" placeholder="???"> problème est compliqué.</div>
+        </div>
+        <button class="check-btn" onclick="checkGrammar()">✓ Vérifier mes réponses</button>
+        <div class="grammar-result" id="grammarResult"></div>
+      </div>
+    </div>
+
+    <!-- READING -->
+    <div class="section" id="section-reading">
+      <div class="section-title">Lecture</div>
+      <div class="section-sub">Touche les mots en couleur pour la traduction</div>
+      <div class="cat-scroll">
+        <button class="cat-pill active" onclick="setReadingText(this,0)">A2 — Récit</button>
+        <button class="cat-pill" onclick="setReadingText(this,1)">B1 — Article</button>
+        <button class="cat-pill" onclick="setReadingText(this,2)">B2 — Opinion</button>
+      </div>
+      <div class="reading-card">
+        <div class="reading-level-badge" id="readingLevel">NIVEAU A2</div>
+        <div class="reading-title-text" id="readingTitle">Une journée à Paris</div>
+        <div class="reading-body" id="readingText"></div>
+        <div class="reading-btns">
+          <button class="read-btn read-btn-green" onclick="readAloud()">🔊 Écouter</button>
+          <button class="read-btn read-btn-purple" onclick="showQuiz()">✍️ Quiz</button>
+        </div>
+        <div class="quiz-section" id="quizSection" style="display:none">
+          <div style="height:1px; background:var(--border); margin:14px 0;"></div>
+          <div class="quiz-q" id="quizQuestion"></div>
+          <div class="quiz-opts" id="quizOptions"></div>
+          <div class="quiz-feedback" id="quizFeedback"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="section" id="section-progress">
+      <div class="section-title">Mes progrès</div>
+      <div class="section-sub">Chemin vers le niveau B2</div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num" style="color:var(--accent)">380</div><div class="stat-lbl">Points XP</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--green)">124</div><div class="stat-lbl">Mots appris</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--blue)">3</div><div class="stat-lbl">Jours consécutifs</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--purple)">A2+</div><div class="stat-lbl">Niveau estimé</div></div>
+      </div>
+      <div class="skills-section-title">Compétences</div>
+      <div class="skill-row">
+        <div class="skill-header"><span>🗣️ Expression orale</span><span class="skill-pct">42%</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="width:42%; background:var(--accent)"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span>👂 Compréhension</span><span class="skill-pct">55%</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="width:55%; background:var(--blue)"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span>✏️ Écriture</span><span class="skill-pct">38%</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="width:38%; background:var(--purple)"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span>📖 Lecture</span><span class="skill-pct">61%</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="width:61%; background:var(--green)"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span>🎙️ Prononciation</span><span class="skill-pct">35%</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="width:35%; background:var(--accent2)"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span>📚 Vocabulaire</span><span class="skill-pct">48%</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="width:48%; background:var(--blue)"></div></div>
+      </div>
+    </div>
+
+  </div><!-- end app-content -->
+
+  <!-- TAB BAR -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" id="tab-home" onclick="showSection('home')">
+      <span class="t-icon">🏠</span>Accueil
+    </button>
+    <button class="tab-btn" id="tab-vocab" onclick="showSection('vocab')">
+      <span class="t-icon">📚</span>Vocab
+    </button>
+    <button class="tab-btn" id="tab-convo" onclick="showSection('convo')">
+      <span class="t-icon">💬</span>Chat
+    </button>
+    <button class="tab-btn" id="tab-grammar" onclick="showSection('grammar')">
+      <span class="t-icon">✏️</span>Grammaire
+    </button>
+    <button class="tab-btn" id="tab-progress" onclick="showSection('progress')">
+      <span class="t-icon">📊</span>Progrès
+    </button>
+  </nav>
+</div>
+
+<!-- TOOLTIP -->
+<div class="tooltip-popup" id="tooltipPopup">
+  <div class="tip-word" id="tipWord"></div>
+  <div class="tip-trans" id="tipTrans"></div>
+  <div class="tip-ex" id="tipEx"></div>
+</div>
+
+<script>
+// ======= CONFIG =======
+const GEMINI_API_KEY = "AIzaSyAVxXqPclM-a44Jv72GTthDYvkK9BJ3YTo";
+const GEMINI_MODEL = "gemini-2.5-flash";
+
+// ======= STATE =======
+let xp = 380, streak = 3;
+let currentCardIdx = 0, cardFlipped = false, currentCat = 'quotidien';
+let isRecording = false, recognition = null, micActive = false;
+let currentScenario = 'cafe';
+let chatHistory = [];
+let currentGrammarTopic = 0;
+let currentReadingIdx = 0;
+let aiModeActive = false;
+let currentAICards = null;
+
+// ======= VOCAB DATA =======
+const vocab = {
+  quotidien: [
+    {fr:'bonjour', es:'¡Hola! / ¡Buenos días!', ex:'"Bonjour !" — ¡Hola!', lv:'A1'},
+    {fr:'merci beaucoup', es:'muchas gracias', ex:'"Merci beaucoup !" — ¡Muchas gracias!', lv:'A1'},
+    {fr:'s\'il vous plaît', es:'por favor (formal)', ex:'"Un café, s\'il vous plaît." — Un café, por favor.', lv:'A1'},
+    {fr:'s\'il te plaît', es:'por favor (informal)', ex:'"Aide-moi, s\'il te plaît !" — ¡Ayúdame, por favor!', lv:'A1'},
+    {fr:'pardon / excusez-moi', es:'perdón / disculpe', ex:'"Pardon, où est la gare ?" — Disculpe, ¿dónde está la estación?', lv:'A1'},
+    {fr:'de rien', es:'de nada', ex:'"Merci ! — De rien !" — ¡Gracias! — ¡De nada!', lv:'A1'},
+    {fr:'maintenant', es:'ahora', ex:'"Je pars maintenant." — Me voy ahora.', lv:'A1'},
+    {fr:'tout de suite', es:'enseguida / de inmediato', ex:'"J\'arrive tout de suite !" — ¡Ya voy!', lv:'A2'},
+    {fr:'d\'habitude', es:'normalmente / por lo general', ex:'"D\'habitude je prends le bus." — Normalmente tomo el bus.', lv:'A2'},
+    {fr:'en fait', es:'en realidad / de hecho', ex:'"En fait, je ne suis pas d\'accord." — En realidad, no estoy de acuerdo.', lv:'B1'},
+    {fr:'tant mieux', es:'¡qué bueno! / menos mal', ex:'"Tu as réussi ? Tant mieux !" — ¿Pasaste? ¡Qué bueno!', lv:'B1'},
+    {fr:'tant pis', es:'qué pena / ni modo', ex:'"Tu ne viens pas ? Tant pis." — ¿No vienes? Ni modo.', lv:'B1'},
+  ],
+  famille: [
+    {fr:'la famille', es:'la familia', ex:'"Ma famille est grande." — Mi familia es grande.', lv:'A1'},
+    {fr:'les parents', es:'los padres (mamá y papá)', ex:'"Mes parents habitent en Colombie." — Mis padres viven en Colombia.', lv:'A1'},
+    {fr:'le frère', es:'el hermano', ex:'"J\'ai un grand frère." — Tengo un hermano mayor.', lv:'A1'},
+    {fr:'la sœur', es:'la hermana', ex:'"Ma sœur est très sympa." — Mi hermana es muy simpática.', lv:'A1'},
+    {fr:'le mari / le conjoint', es:'el esposo / la pareja', ex:'"Mon mari est français." — Mi esposo es francés.', lv:'A1'},
+    {fr:'les grands-parents', es:'los abuelos', ex:'"Mes grands-parents sont âgés." — Mis abuelos son mayores.', lv:'A1'},
+    {fr:'l\'oncle', es:'el tío', ex:'"Mon oncle habite à Paris." — Mi tío vive en París.', lv:'A1'},
+    {fr:'la tante', es:'la tía', ex:'"Ma tante est médecin." — Mi tía es médica.', lv:'A1'},
+    {fr:'le beau-père', es:'el suegro / el padrastro', ex:'"Mon beau-père est sympa." — Mi suegro es simpático.', lv:'A2'},
+    {fr:'le neveu', es:'el sobrino', ex:'"Mon neveu a 5 ans." — Mi sobrino tiene 5 años.', lv:'A2'},
+    {fr:'s\'entendre bien', es:'llevarse bien', ex:'"Je m\'entends bien avec ma famille." — Me llevo bien con mi familia.', lv:'B1'},
+  ],
+  travail: [
+    {fr:'le travail / le boulot', es:'el trabajo / el curro', ex:'"J\'ai beaucoup de travail." — Tengo mucho trabajo.', lv:'A1'},
+    {fr:'le bureau', es:'la oficina', ex:'"Je travaille dans un bureau." — Trabajo en una oficina.', lv:'A1'},
+    {fr:'la réunion', es:'la reunión', ex:'"J\'ai une réunion à 9h." — Tengo una reunión a las 9.', lv:'A1'},
+    {fr:'le collègue', es:'el/la colega', ex:'"Mon collègue est sympa." — Mi compañero es simpático.', lv:'A1'},
+    {fr:'le chef / la cheffe', es:'el/la jefe/a', ex:'"Mon chef est exigeant." — Mi jefe es exigente.', lv:'A1'},
+    {fr:'le salaire', es:'el salario / el sueldo', ex:'"Mon salaire a augmenté." — Mi sueldo aumentó.', lv:'A2'},
+    {fr:'la candidature', es:'la solicitud de empleo', ex:'"J\'ai envoyé ma candidature." — Envié mi solicitud.', lv:'B1'},
+    {fr:'le contrat de travail', es:'el contrato de trabajo', ex:'"J\'ai signé mon contrat." — Firmé mi contrato.', lv:'B1'},
+  ],
+  etudes: [
+    {fr:'l\'école', es:'la escuela', ex:'"Je vais à l\'école." — Voy a la escuela.', lv:'A1'},
+    {fr:'l\'université', es:'la universidad', ex:'"J\'étudie à l\'université." — Estudio en la universidad.', lv:'A1'},
+    {fr:'les études', es:'los estudios', ex:'"Mes études durent 3 ans." — Mis estudios duran 3 años.', lv:'A1'},
+    {fr:'le cours / la leçon', es:'la clase / la lección', ex:'"Le cours commence à 9h." — La clase empieza a las 9.', lv:'A1'},
+    {fr:'l\'examen', es:'el examen', ex:'"J\'ai un examen demain !" — ¡Tengo un examen mañana!', lv:'A1'},
+    {fr:'le diplôme', es:'el diploma / el título', ex:'"J\'ai obtenu mon diplôme." — Obtuve mi título.', lv:'A2'},
+    {fr:'les devoirs', es:'las tareas / los deberes', ex:'"J\'ai beaucoup de devoirs." — Tengo muchas tareas.', lv:'A1'},
+  ],
+  logistique: [
+    {fr:'le métro', es:'el metro', ex:'"Je prends le métro tous les jours." — Tomo el metro todos los días.', lv:'A1'},
+    {fr:'le bus / l\'autobus', es:'el bus / el autobús', ex:'"Le bus est en retard !" — ¡El bus está retrasado!', lv:'A1'},
+    {fr:'la gare', es:'la estación (de tren)', ex:'"La gare est loin d\'ici ?" — ¿Está lejos la estación?', lv:'A1'},
+    {fr:'le train', es:'el tren', ex:'"Le train part à 8h30." — El tren sale a las 8:30.', lv:'A1'},
+    {fr:'la carte (de transport)', es:'la tarjeta de transporte', ex:'"J\'ai rechargé ma carte Navigo." — Recargué mi tarjeta.', lv:'A2'},
+    {fr:'le trajet', es:'el trayecto / el recorrido', ex:'"Le trajet dure 20 minutes." — El trayecto dura 20 minutos.', lv:'A2'},
+  ],
+  maison: [
+    {fr:'l\'appartement', es:'el apartamento / el piso', ex:'"Mon appartement est petit." — Mi apartamento es pequeño.', lv:'A1'},
+    {fr:'la chambre', es:'la habitación / el cuarto', ex:'"Ma chambre donne sur la rue." — Mi habitación da a la calle.', lv:'A1'},
+    {fr:'la cuisine', es:'la cocina', ex:'"La cuisine est bien équipée." — La cocina está bien equipada.', lv:'A1'},
+    {fr:'le loyer', es:'el arriendo / el alquiler', ex:'"J\'ai payé mon loyer !" — ¡Pagué mi arriendo!', lv:'A2'},
+    {fr:'les meubles', es:'los muebles', ex:'"L\'appartement est livré avec les meubles." — El apartamento viene amoblado.', lv:'A1'},
+    {fr:'le ménage', es:'el aseo / la limpieza del hogar', ex:'"Je fais le ménage le samedi." — Hago el aseo los sábados.', lv:'A2'},
+    {fr:'le voisin / la voisine', es:'el vecino / la vecina', ex:'"Mon voisin fait trop de bruit." — Mi vecino hace mucho ruido.', lv:'A2'},
+  ],
+  sante: [
+    {fr:'la santé', es:'la salud', ex:'"La santé avant tout !" — ¡La salud ante todo!', lv:'A1'},
+    {fr:'le médecin / le docteur', es:'el médico / el doctor', ex:'"Je dois voir le médecin." — Debo ir al médico.', lv:'A1'},
+    {fr:'le médicament', es:'el medicamento / la pastilla', ex:'"Prends ton médicament !" — ¡Tómate tu medicamento!', lv:'A1'},
+    {fr:'la pharmacie', es:'la farmacia / la droguería', ex:'"La pharmacie est ouverte." — La farmacia está abierta.', lv:'A1'},
+    {fr:'j\'ai mal à...', es:'me duele...', ex:'"J\'ai mal à la tête." — Me duele la cabeza.', lv:'A1'},
+    {fr:'la fièvre', es:'la fiebre', ex:'"Il a 39 de fièvre." — Tiene 39 de fiebre.', lv:'A1'},
+    {fr:'prendre rendez-vous', es:'pedir cita / sacar turno', ex:'"Je dois prendre rendez-vous." — Debo pedir cita.', lv:'A2'},
+    {fr:'guérir', es:'sanar / curarse', ex:'"Tu vas vite guérir !" — ¡Te vas a curar pronto!', lv:'A2'},
+  ],
+  emotions: [
+    {fr:'heureux / heureuse', es:'feliz / contento/a', ex:'"Je suis très heureux !" — ¡Estoy muy feliz!', lv:'A1'},
+    {fr:'triste', es:'triste', ex:'"Elle est un peu triste." — Ella está un poco triste.', lv:'A1'},
+    {fr:'fatigué(e)', es:'cansado/a', ex:'"Je suis épuisé(e) !" — ¡Estoy agotado/a!', lv:'A1'},
+    {fr:'inquiet / inquiète', es:'preocupado/a', ex:'"Tu as l\'air inquiet." — Pareces preocupado.', lv:'A2'},
+    {fr:'fier / fière', es:'orgulloso/a', ex:'"Je suis fière de toi !" — ¡Estoy orgullosa de ti!', lv:'A2'},
+    {fr:'stressé(e)', es:'estresado/a', ex:'"Je suis très stressé." — Estoy muy estresado.', lv:'A2'},
+    {fr:'déçu(e)', es:'decepcionado/a', ex:'"Je suis déçu de ce résultat." — Estoy decepcionado.', lv:'B1'},
+    {fr:'avoir le cafard', es:'estar deprimido/a / estar de bajón', ex:'"J\'ai le cafard aujourd\'hui." — Hoy estoy de bajón.', lv:'B1'},
+  ],
+  amour: [
+    {fr:'tomber amoureux / amoureuse', es:'enamorarse', ex:'"Je suis tombé amoureux d\'elle." — Me enamoré de ella.', lv:'A2'},
+    {fr:'sortir avec quelqu\'un', es:'salir con alguien', ex:'"Je sors avec quelqu\'un depuis 2 ans." — Llevo 2 años saliendo con alguien.', lv:'A2'},
+    {fr:'se marier', es:'casarse', ex:'"On va se marier l\'été prochain." — Nos vamos a casar el próximo verano.', lv:'A2'},
+    {fr:'rompre', es:'terminar / romper', ex:'"Il m\'a quittée." — Me dejó.', lv:'B1'},
+    {fr:'je t\'aime', es:'te quiero / te amo', ex:'"Je t\'aime de tout mon cœur." — Te amo con todo mi corazón.', lv:'A1'},
+    {fr:'tu me manques', es:'te extraño', ex:'"Tu me manques tellement !" — ¡Te extraño tanto!', lv:'A2'},
+    {fr:'le coup de foudre', es:'el amor a primera vista', ex:'"Ce fut un vrai coup de foudre." — Fue un verdadero amor a primera vista.', lv:'B1'},
+  ],
+  courses: [
+    {fr:'faire les courses', es:'hacer las compras', ex:'"Je dois faire les courses ce soir." — Debo hacer las compras esta noche.', lv:'A1'},
+    {fr:'le supermarché', es:'el supermercado', ex:'"Il y a un supermarché au coin." — Hay un supermercado en la esquina.', lv:'A1'},
+    {fr:'le marché', es:'el mercado', ex:'"Je vais au marché le dimanche." — Voy al mercado los domingos.', lv:'A1'},
+    {fr:'la caisse', es:'la caja (registradora)', ex:'"Il y a la queue à la caisse." — Hay fila en la caja.', lv:'A2'},
+    {fr:'en promotion / en solde', es:'en oferta / en promoción', ex:'"Ce produit est en promo." — Este producto está en oferta.', lv:'A2'},
+    {fr:'les légumes', es:'las verduras', ex:'"Je mange beaucoup de légumes." — Como muchas verduras.', lv:'A1'},
+    {fr:'les fruits', es:'las frutas', ex:'"Les fruits sont frais aujourd\'hui." — Las frutas están frescas.', lv:'A1'},
+  ],
+  cuisine: [
+    {fr:'le croissant', es:'el croissant', ex:'"Un croissant au beurre, s\'il vous plaît." — Un croissant de mantequilla.', lv:'A1'},
+    {fr:'la baguette', es:'la baguette / el pan francés', ex:'"Une baguette bien cuite." — Una baguette bien horneada.', lv:'A1'},
+    {fr:'le fromage', es:'el queso', ex:'"J\'adore le fromage français !" — ¡Me encanta el queso francés!', lv:'A1'},
+    {fr:'la recette', es:'la receta', ex:'"Tu as la recette ?" — ¿Tienes la receta?', lv:'A1'},
+    {fr:'cuisiner', es:'cocinar', ex:'"J\'aime cuisiner pour mes amis." — Me gusta cocinar para mis amigos.', lv:'A1'},
+    {fr:'délicieux / savoureux', es:'delicioso / sabroso', ex:'"C\'est délicieux !" — ¡Está delicioso!', lv:'A1'},
+    {fr:'le repas', es:'la comida / el plato', ex:'"Le repas est prêt !" — ¡La comida está lista!', lv:'A1'},
+    {fr:'l\'entrée', es:'la entrada / el aperitivo', ex:'"Comme entrée, j\'ai pris une salade." — De entrada, pedí una ensalada.', lv:'A2'},
+  ],
+  voyage: [
+    {fr:'l\'aéroport', es:'el aeropuerto', ex:'"On va à l\'aéroport à 6h." — Vamos al aeropuerto a las 6.', lv:'A1'},
+    {fr:'le billet / le vol', es:'el tiquete / el vuelo', ex:'"J\'ai perdu mon billet !" — ¡Perdí mi tiquete!', lv:'A1'},
+    {fr:'la valise', es:'la maleta', ex:'"Ma valise est trop lourde." — Mi maleta está muy pesada.', lv:'A1'},
+    {fr:'le passeport', es:'el pasaporte', ex:'"Votre passeport, s\'il vous plaît." — Su pasaporte, por favor.', lv:'A1'},
+    {fr:'réserver', es:'reservar', ex:'"J\'ai réservé un hôtel en ligne." — Reservé un hotel en línea.', lv:'A1'},
+    {fr:'se perdre', es:'perderse', ex:'"Je me suis perdu dans Paris !" — ¡Me perdí en París!', lv:'A2'},
+    {fr:'l\'office du tourisme', es:'la oficina de turismo', ex:'"Je vais à l\'office du tourisme." — Voy a la oficina de turismo.', lv:'A2'},
+  ],
+  argent: [
+    {fr:'l\'argent / le fric', es:'el dinero / la plata', ex:'"Je n\'ai plus d\'argent !" — ¡No me queda dinero!', lv:'A1'},
+    {fr:'la carte bancaire', es:'la tarjeta bancaria', ex:'"Je paye par carte." — Pago con tarjeta.', lv:'A1'},
+    {fr:'le loyer', es:'el arriendo / el alquiler', ex:'"J\'ai payé mon loyer !" — ¡Pagué mi arriendo!', lv:'A2'},
+    {fr:'économiser', es:'ahorrar', ex:'"J\'essaie d\'économiser chaque mois." — Intento ahorrar cada mes.', lv:'A2'},
+    {fr:'les dépenses', es:'los gastos', ex:'"Mes dépenses ont augmenté." — Mis gastos aumentaron.', lv:'B1'},
+    {fr:'emprunter / prêter', es:'pedir prestado / prestar', ex:'"Tu peux me prêter 20€ ?" — ¿Me puedes prestar 20€?', lv:'A2'},
+    {fr:'gratuit / payant', es:'gratuito / de pago', ex:'"C\'est gratuit pour les étudiants." — Es gratuito para los estudiantes.', lv:'A1'},
+  ],
+  technologie: [
+    {fr:'le téléphone portable', es:'el celular / el teléfono móvil', ex:'"Mon téléphone est mort !" — ¡Se me murió el celular!', lv:'A1'},
+    {fr:'le mot de passe', es:'la contraseña', ex:'"J\'ai oublié mon mot de passe !" — ¡Olvidé mi contraseña!', lv:'A1'},
+    {fr:'le réseau Wi-Fi', es:'el wifi', ex:'"Le Wi-Fi ne marche pas." — El wifi no funciona.', lv:'A1'},
+    {fr:'la batterie', es:'la batería', ex:'"Ma batterie est à plat." — Mi batería está descargada.', lv:'A1'},
+    {fr:'les réseaux sociaux', es:'las redes sociales', ex:'"Elle est sur les réseaux sociaux." — Está en redes sociales.', lv:'A2'},
+    {fr:'télécharger', es:'descargar', ex:'"Je télécharge l\'application." — Descargo la aplicación.', lv:'A2'},
+    {fr:'mettre à jour', es:'actualizar', ex:'"Il faut mettre à jour ton appli." — Tienes que actualizar tu app.', lv:'A2'},
+  ],
+  temps: [
+    {fr:'il fait beau', es:'hace buen tiempo', ex:'"Il fait beau aujourd\'hui !" — ¡Hoy hace buen tiempo!', lv:'A1'},
+    {fr:'il pleut / la pluie', es:'llueve / la lluvia', ex:'"Il pleut encore !" — ¡Está lloviendo otra vez!', lv:'A1'},
+    {fr:'il fait froid / il fait chaud', es:'hace frío / hace calor', ex:'"Il fait très froid en hiver." — En invierno hace mucho frío.', lv:'A1'},
+    {fr:'nuageux / couvert', es:'nublado', ex:'"Le ciel est couvert ce matin." — El cielo está nublado.', lv:'A2'},
+    {fr:'la tempête / l\'orage', es:'la tormenta', ex:'"Il y a un orage ce soir." — Esta noche hay tormenta.', lv:'A2'},
+    {fr:'le printemps', es:'la primavera', ex:'"Au printemps, tout fleurit." — En primavera, todo florece.', lv:'A1'},
+    {fr:'la météo', es:'el clima / el pronóstico del tiempo', ex:'"Tu as regardé la météo ?" — ¿Revisaste el pronóstico?', lv:'A2'},
+  ],
+  adverbes: [
+    {fr:'vraiment', es:'de verdad / realmente', ex:'"C\'est vraiment beau !" — ¡Es realmente bonito!', lv:'A2'},
+    {fr:'plutôt', es:'bastante / más bien', ex:'"Il est plutôt sympa." — Es bastante simpático.', lv:'B1'},
+    {fr:'assez', es:'bastante / suficiente', ex:'"J\'ai assez mangé, merci." — He comido suficiente.', lv:'A2'},
+    {fr:'trop', es:'demasiado', ex:'"C\'est trop cher !" — ¡Es demasiado caro!', lv:'A1'},
+    {fr:'encore', es:'todavía / otra vez', ex:'"Il dort encore !" — ¡Todavía está durmiendo!', lv:'A1'},
+    {fr:'déjà', es:'ya', ex:'"Tu as déjà mangé ?" — ¿Ya comiste?', lv:'A1'},
+    {fr:'surtout', es:'sobre todo / especialmente', ex:'"J\'aime la France, surtout Paris !" — Me encanta Francia, sobre todo París.', lv:'A2'},
+    {fr:'donc', es:'entonces / así que', ex:'"Il pleut, donc je prends un parapluie." — Llueve, entonces tomo paraguas.', lv:'A2'},
+    {fr:'pourtant', es:'sin embargo / aunque', ex:'"Il est gentil, pourtant il fait peur." — Es simpático, sin embargo da miedo.', lv:'B1'},
+    {fr:'finalement', es:'finalmente / al final', ex:'"Finalement, il n\'est pas venu." — Al final, no vino.', lv:'A2'},
+  ],
+};
+
+// ======= SCENARIOS =======
+const scenarios = {
+  cafe: { name:'Au café', system: `Tu es un serveur sympa dans un café parisien. L'utilisatrice est une apprenante colombienne de niveau A2-B1. Parle UNIQUEMENT en français. Après chaque réponse, si tu détectes une erreur de grammaire, ajoute discrètement "✏️ Correction : [correction]". Propose des suggestions courtes si elle hésite. Sois chaleureux et patient.` },
+  shopping: { name:'Shopping', system: `Tu es un vendeur dans une boutique de vêtements à Paris. L'utilisatrice est une apprenante colombienne A2-B1. Parle UNIQUEMENT en français. Corrige discrètement les erreurs avec "✏️ Correction :".` },
+  médecin: { name:'Chez le médecin', system: `Tu es un médecin généraliste. L'utilisatrice est une apprenante colombienne A2-B1. Parle UNIQUEMENT en français, vocabulaire médical simple. Corrige discrètement avec "✏️ Correction :".` },
+  voyage: { name:'Voyage', system: `Tu es un agent de voyage. L'utilisatrice est une apprenante colombienne A2-B1. Parle UNIQUEMENT en français. Corrige discrètement avec "✏️ Correction :".` },
+  libre: { name:'Discussion libre', system: `Tu es un(e) ami(e) français(e) sympa. L'utilisatrice est une apprenante colombienne A2-B1 qui veut pratiquer. Parle UNIQUEMENT en français. Corrige discrètement les erreurs avec "✏️ Correction :". Discussion libre et naturelle.` }
+};
+const quickOptions = {
+  cafe: ["Je voudrais un café, s'il vous plaît.", "Avez-vous des croissants ?", "L'addition, s'il vous plaît !", "C'est combien ?"],
+  shopping: ["Je cherche une robe rouge.", "Avez-vous ça en bleu ?", "C'est trop cher !"],
+  médecin: ["J'ai mal à la tête.", "J'ai de la fièvre.", "Depuis quand ?"],
+  voyage: ["Je voudrais aller à Paris.", "Avez-vous des billets ?", "Quel est le prix ?"],
+  libre: ["Comment tu vas ?", "Tu aimes la musique ?", "Parle-moi de Paris !"]
+};
+
+// ======= GRAMMAR DATA =======
+const grammarTopics = [
+  {
+    title: 'Les Articles Définis et Indéfinis',
+    subtitle: 'Une différence importante avec l\'espagnol !',
+    rule: 'En français : <em>le / la / les</em> (définis) et <em>un / une / des</em> (indéfinis). "La problema" en ES → <em>le problème</em> en FR (masculin !)',
+    examples: [
+      {fr: 'Je veux <em style="color:var(--accent)">une</em> pomme.', es: 'Quiero una manzana. (F, indéfini)'},
+      {fr: '<em style="color:var(--accent)">Le</em> chat est mignon.', es: 'El gato es lindo. (M, défini)'},
+      {fr: 'J\'aime <em style="color:var(--accent)">les</em> fleurs.', es: 'Me gustan las flores. (pluriel)'},
+    ],
+    blanks: [
+      {q: '1. J\'ai vu ___ chien dans le parc.', a: 'un'},
+      {q: '2. ___ tour Eiffel est magnifique.', a: 'La'},
+      {q: '3. Elle mange ___ croissants chaque matin.', a: 'des'},
+      {q: '4. ___ problème est compliqué.', a: 'Le'},
+    ]
+  },
+  {
+    title: 'Le Passé Composé',
+    subtitle: 'L\'équivalent du pretérito perfecto',
+    rule: 'Formation : <em>avoir/être</em> + participe passé. Avec être : verbes de mouvement + pronominaux.',
+    examples: [
+      {fr: 'J\'<em style="color:var(--accent)">ai mangé</em> une pizza.', es: 'Comí una pizza.'},
+      {fr: 'Elle <em style="color:var(--accent)">est allée</em> au marché.', es: 'Ella fue al mercado.'},
+      {fr: 'Nous <em style="color:var(--accent)">avons regardé</em> un film.', es: 'Vimos una película.'},
+    ],
+    blanks: [
+      {q: '1. Hier, je ___ (manger) une baguette.', a: 'ai mangé'},
+      {q: '2. Elle ___ (partir) à 8h.', a: 'est partie'},
+      {q: '3. Ils ___ (voir) le film.', a: 'ont vu'},
+      {q: '4. Nous ___ (aller) au restaurant.', a: 'sommes allés'},
+    ]
+  },
+  {
+    title: 'Le Subjonctif',
+    subtitle: 'Après doute, émotion, volonté',
+    rule: 'Après : <em>il faut que, je veux que, bien que, pour que...</em> Base = 3ème personne pluriel présent, sans -ent.',
+    examples: [
+      {fr: 'Il faut que tu <em style="color:var(--accent)">viennes</em>.', es: 'Es necesario que vengas.'},
+      {fr: 'Je veux qu\'il <em style="color:var(--accent)">soit</em> heureux.', es: 'Quiero que él sea feliz.'},
+      {fr: 'Bien qu\'elle <em style="color:var(--accent)">soit</em> fatiguée...', es: 'Aunque esté cansada...'},
+    ],
+    blanks: [
+      {q: '1. Il faut que vous ___ (venir).', a: 'veniez'},
+      {q: '2. Je doute qu\'il ___ (avoir) raison.', a: 'ait'},
+      {q: '3. Pour que tu ___ (réussir), travaille !', a: 'réussisses'},
+      {q: '4. Bien qu\'il ___ (faire) froid...', a: 'fasse'},
+    ]
+  },
+  {
+    title: 'Les Pronoms Personnels',
+    subtitle: 'COD, COI et pronoms toniques',
+    rule: 'COD (le/la/les) remplace le complément direct. COI (lui/leur) remplace à + personne.',
+    examples: [
+      {fr: 'Je <em style="color:var(--accent)">le</em> vois. (Pierre)', es: 'Lo veo. (a Pedro)'},
+      {fr: 'Je <em style="color:var(--accent)">lui</em> parle. (Marie)', es: 'Le hablo. (a María)'},
+      {fr: 'Donne-<em style="color:var(--accent)">le-lui</em> !', es: '¡Dáselo!'},
+    ],
+    blanks: [
+      {q: '1. Tu vois Marie ? Oui, je ___ vois.', a: 'la'},
+      {q: '2. Il parle à Paul ? Oui, il ___ parle.', a: 'lui'},
+      {q: '3. Tu manges des pommes ? Oui, j\'___ mange.', a: 'en'},
+      {q: '4. Il va à Paris ? Oui, il ___ va.', a: 'y'},
+    ]
+  }
+];
+
+// ======= READING DATA =======
+const readingTexts = [
+  {
+    level: 'NIVEAU A2', title: 'Une journée à Paris',
+    text: `Marie se réveille à sept heures du matin. Elle <span class="highlight" data-word="boit" data-trans="bebe (verbo: boire)" data-ex="Je bois du café chaque matin.">boit</span> un café et mange un <span class="highlight" data-word="croissant" data-trans="el pan característico francés" data-ex="Les croissants français sont délicieux !">croissant</span>. Ensuite, elle <span class="highlight" data-word="prend" data-trans="toma (el metro/autobus)" data-ex="Je prends le métro tous les jours.">prend</span> le métro pour aller au travail. Le soir, elle se <span class="highlight" data-word="promène" data-trans="pasea" data-ex="Je me promène dans le parc.">promène</span> au bord de la <span class="highlight" data-word="Seine" data-trans="el río Sena — el río de París" data-ex="La Seine traverse Paris.">Seine</span>. Paris est une ville <span class="highlight" data-word="magnifique" data-trans="magnífica / hermosa" data-ex="C'est une ville magnifique !">magnifique</span> !`,
+    quiz: {q: 'Que fait Marie le soir ?', opts: ['Elle travaille.', 'Elle se promène au bord de la Seine.', 'Elle va au cinéma.', 'Elle mange au restaurant.'], correct: 1}
+  },
+  {
+    level: 'NIVEAU B1', title: 'Le Changement Climatique en France',
+    text: `La France s'<span class="highlight" data-word="engage" data-trans="compromete / se involucra" data-ex="La France s'engage pour l'environnement.">engage</span> de plus en plus dans la <span class="highlight" data-word="transition énergétique" data-trans="transición energética" data-ex="La transition énergétique est urgente.">transition énergétique</span>. Le gouvernement a mis en place plusieurs <span class="highlight" data-word="mesures" data-trans="medidas" data-ex="Ces mesures sont importantes.">mesures</span> pour <span class="highlight" data-word="réduire" data-trans="reducir" data-ex="Nous devons réduire notre consommation.">réduire</span> les émissions de CO₂. Cependant, certains <span class="highlight" data-word="citoyens" data-trans="ciudadanos" data-ex="Les citoyens doivent participer.">citoyens</span> estiment que ces efforts sont <span class="highlight" data-word="insuffisants" data-trans="insuficientes" data-ex="Ces efforts semblent insuffisants.">insuffisants</span>.`,
+    quiz: {q: 'Selon l\'article, que pensent certains citoyens ?', opts: ['Les efforts sont excellents.', 'Ils ne s\'intéressent pas au sujet.', 'Les efforts sont insuffisants.', 'Ils refusent de changer.'], correct: 2}
+  },
+  {
+    level: 'NIVEAU B2', title: 'L\'Intelligence Artificielle : Opportunité ou Menace ?',
+    text: `L'essor <span class="highlight" data-word="fulgurant" data-trans="fulgurante / meteórico" data-ex="Une croissance fulgurante.">fulgurant</span> de l'intelligence artificielle soulève des questions <span class="highlight" data-word="fondamentales" data-trans="fundamentales" data-ex="Des questions fondamentales pour la société.">fondamentales</span> quant à l'avenir du travail. Si certains experts voient dans ces <span class="highlight" data-word="avancées" data-trans="avances" data-ex="Les avancées technologiques changent notre monde.">avancées</span> une opportunité, d'autres <span class="highlight" data-word="redoutent" data-trans="temen" data-ex="Ils redoutent les conséquences.">redoutent</span> une <span class="highlight" data-word="déstabilisation" data-trans="desestabilización" data-ex="La déstabilisation du marché du travail.">déstabilisation</span> profonde. La question de la <span class="highlight" data-word="régulation" data-trans="regulación" data-ex="La régulation est nécessaire.">régulation</span> devient <span class="highlight" data-word="incontournable" data-trans="ineludible / inevitable" data-ex="Ce débat est incontournable.">incontournable</span>.`,
+    quiz: {q: 'Quelle position est présentée dans le texte ?', opts: ['L\'IA est uniquement positive.', 'Les deux perspectives : opportunité et menace.', 'L\'IA va détruire tous les emplois.', 'L\'IA n\'a aucun impact réel.'], correct: 1}
+  }
+];
+
+// ======= PRONUNCIATION DATA =======
+const pronunWords = [
+  { word:'on / an / un', ipa:'[ɔ̃] [ɑ̃] [œ̃] — sons nasaux', tip:'💡 En espagnol il n\'y a pas de voyelles nasales ! Air par le nez + bouche. Ex: "bon" = [bɔ̃]', phonemes:['bon','blanc','un','enfant','chanson'] },
+  { word:'lune / rue / vue', ipa:'[y] — le "U" français', tip:'💡 Le "U" français n\'existe pas en espagnol ! Fais "I" avec la bouche en forme de "O". Ex: lune, rue, tu', phonemes:['tu','rue','lune','vue','sur'] },
+  { word:'rouge / Paris', ipa:'[ʁ] — le "R" guttural', tip:'💡 Le "R" français vient de la gorge, pas de la langue. Pense à te gargariser légèrement !', phonemes:['rouge','Paris','être','vrai','grand'] },
+  { word:'feu / bleu / peur', ipa:'[ø] [œ] — le son "EU"', tip:'💡 Fais "E" avec la bouche arrondie. "Feu" = lèvres arrondies + son "E". N\'existe pas en espagnol !', phonemes:['feu','bleu','peur','coeur','seul'] },
+  { word:'les enfants / un ami', ipa:'Liaisons obligatoires', tip:'💡 En français, on "relie" les mots ! "les enfants" = lézenfants. La consonne finale se prononce devant voyelle.', phonemes:['les enfants','un homme','vous avez','ils ont','nous allons'] }
+];
+
+// ======= NAVIGATION =======
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  const tabId = 'tab-' + name;
+  if(document.getElementById(tabId)) document.getElementById(tabId).classList.add('active');
+  // Scroll to top
+  document.querySelector('.app-content').scrollTo(0, 0);
+  if(name === 'convo' && chatHistory.length === 0) initChat();
+  if(name === 'reading') loadReading(currentReadingIdx);
+}
+
+// ======= XP =======
+function addXP(pts) {
+  xp += pts;
+  const pct = Math.min((xp % 1000) / 10, 100);
+  document.getElementById('xpFill').style.width = pct + '%';
+  document.getElementById('xpNum').textContent = xp;
+}
+
+// ======= SPEECH =======
+function speak(text, lang='fr-FR') {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang; u.rate = 0.85; u.pitch = 1;
+  const voices = speechSynthesis.getVoices();
+  const frVoice = voices.find(v => v.lang.startsWith('fr'));
+  if(frVoice) u.voice = frVoice;
+  speechSynthesis.speak(u);
+}
+
+// ======= VOCAB =======
+function toggleAIMode() {
+  aiModeActive = !aiModeActive;
+  const panel = document.getElementById('aiModePanel');
+  const btn = document.getElementById('aiModeBtn');
+  const cats = document.getElementById('vocabCatsWrap');
+  panel.style.display = aiModeActive ? 'block' : 'none';
+  cats.style.display = aiModeActive ? 'none' : 'block';
+  btn.textContent = aiModeActive ? '📚 Mode Manuel' : '✨ Mode IA';
+  if(!aiModeActive) { currentAICards = null; updateCard(); }
+}
+
+async function generateAICards() {
+  const level = document.getElementById('aiLevel').value;
+  const theme = document.getElementById('aiTheme').value;
+  const status = document.getElementById('aiCardsStatus');
+  status.textContent = '⏳ Génération en cours...';
+  try {
+    const prompt = `Génère 8 flashcards de niveau ${level} sur le thème: "${theme}". Mots utiles, courants, adaptés à une colombienne vivant en France.`;
+    const systemInst = `Tu es un expert en enseignement du français pour hispanophones colombiens. Génère exactement 8 mots/expressions. Format: [{"fr":"mot","es":"traduction en espagnol colombien","ex":"phrase exemple en français — traduction en espagnol","lv":"${level}"}]`;
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: systemInst }] },
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: "application/json" }
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const text = data.candidates[0].content.parts[0].text;
+    currentAICards = JSON.parse(text);
+    currentCardIdx = 0; cardFlipped = false;
+    document.getElementById('flashcard').classList.remove('flipped');
+    updateCard();
+    status.innerHTML = `<span style="color:var(--green)">✅ ${currentAICards.length} cartes générées sur "${theme}" (${level}) !</span>`;
+    addXP(5);
+  } catch(e) {
+    console.error(e);
+    status.innerHTML = '<span style="color:var(--accent2)">❌ Erreur. Vérifie ta clé API.</span>';
+  }
+}
+
+function setVocabCat(el, cat) {
+  document.querySelectorAll('#vocabCats .cat-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  currentCat = cat; currentCardIdx = 0; cardFlipped = false;
+  currentAICards = null;
+  document.getElementById('flashcard').classList.remove('flipped');
+  updateCard();
+}
+function flipCard() {
+  cardFlipped = !cardFlipped;
+  document.getElementById('flashcard').classList.toggle('flipped', cardFlipped);
+}
+function updateCard() {
+  const cards = currentAICards || vocab[currentCat];
+  if(!cards || cards.length === 0) return;
+  const c = cards[currentCardIdx % cards.length];
+  document.getElementById('cardWord').textContent = c.fr;
+  document.getElementById('cardTrans').textContent = c.es;
+  document.getElementById('cardExample').textContent = c.ex;
+  const lvEl = document.getElementById('cardLevel');
+  if(lvEl) lvEl.textContent = c.lv || '';
+  document.getElementById('cardCounter').textContent = `Carte ${(currentCardIdx%cards.length)+1} / ${cards.length}`;
+  cardFlipped = false;
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+function nextCard(diff) {
+  const pts = diff === 'easy' ? 10 : diff === 'ok' ? 5 : 2;
+  addXP(pts);
+  currentCardIdx++;
+  updateCard();
+}
+function speakWord() {
+  const cards = currentAICards || vocab[currentCat];
+  const w = cards[currentCardIdx % cards.length].fr;
+  speak(w, 'fr-FR');
+}
+function speakExample() {
+  const cards = currentAICards || vocab[currentCat];
+  const ex = cards[currentCardIdx % cards.length].ex;
+  const frPart = ex.split(' — ')[0].replace(/[""]/g, '');
+  speak(frPart, 'fr-FR');
+}
+
+// ======= CHAT =======
+function setScenario(el, sc) {
+  document.querySelectorAll('.scenario-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  currentScenario = sc;
+  chatHistory = [];
+  document.getElementById('chatContainer').innerHTML = '';
+  document.getElementById('chatOptions').innerHTML = '';
+  initChat();
+}
+async function initChat() {
+  const introMap = {
+    cafe: 'Bonjour ! Bienvenue dans notre café. Qu\'est-ce que je vous sers ? ☕',
+    shopping: 'Bonjour ! Je peux vous aider ? Vous cherchez quelque chose de particulier ?',
+    médecin: 'Bonjour ! Asseyez-vous. Qu\'est-ce qui vous amène aujourd\'hui ?',
+    voyage: 'Bonjour ! Vous souhaitez voyager en France ? Je suis là pour vous aider !',
+    libre: 'Salut ! Comment tu vas ? Tu veux qu\'on discute de quoi aujourd\'hui ? 😊'
+  };
+  const intro = introMap[currentScenario];
+  chatHistory.push({role: 'model', parts: [{text: intro}]});
+  addMsg('ai', intro);
+  showOptions();
+}
+function showOptions() {
+  const opts = quickOptions[currentScenario] || [];
+  const el = document.getElementById('chatOptions');
+  el.innerHTML = opts.map(o => `<button class="quick-opt" onclick="sendQuick('${o.replace(/'/g,"\\'")}')">💬 ${o}</button>`).join('');
+}
+function sendQuick(txt) {
+  document.getElementById('chatInput').value = txt;
+  sendMsg();
+}
+async function sendMsg() {
+  const input = document.getElementById('chatInput');
+  const txt = input.value.trim();
+  if(!txt) return;
+  input.value = '';
+  chatHistory.push({role: 'user', parts: [{text: txt}]});
+  addMsg('user', txt);
+  document.getElementById('chatOptions').innerHTML = '';
+  const loadId = addMsg('ai', null, true);
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: scenarios[currentScenario].system }] },
+        contents: chatHistory
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const reply = data.candidates[0].content.parts[0].text || 'Désolé, je n\'ai pas compris.';
+    chatHistory.push({role: 'model', parts: [{text: reply}]});
+    removeLoading(loadId);
+    addMsg('ai', reply);
+    addXP(8);
+    showOptions();
+  } catch(e) {
+    console.error(e);
+    chatHistory.pop();
+    removeLoading(loadId);
+    addMsg('ai', '❌ Erreur de connexion. Vérifie ta clé API.');
+  }
+}
+let msgId = 0;
+function addMsg(type, text, loading=false) {
+  const container = document.getElementById('chatContainer');
+  const id = 'msg_' + (++msgId);
+  const avatar = type === 'ai' ? '🤖' : '👩🏽';
+  let content = loading ? '<div class="loading-dots"><span></span><span></span><span></span></div>' : formatMsg(text||'');
+  const html = `<div class="msg ${type}" id="${id}"><div class="msg-avatar">${avatar}</div><div class="msg-bubble">${content}</div></div>`;
+  container.insertAdjacentHTML('beforeend', html);
+  container.scrollTop = container.scrollHeight;
+  return id;
+}
+function formatMsg(text) {
+  return text.replace(/✏️ Correction : (.+)/g, '<div class="msg-correction">✏️ Correction : $1</div>')
+             .replace(/\n/g, '<br>');
+}
+function removeLoading(id) {
+  const el = document.getElementById(id);
+  if(el) el.remove();
+}
+
+// ======= MIC =======
+function toggleMic() {
+  const btn = document.getElementById('micBtn');
+  if(!micActive) {
+    if(!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      alert('Désolé, ton navigateur ne supporte pas la reconnaissance vocale.');
+      return;
+    }
+    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'fr-FR'; recognition.continuous = false; recognition.interimResults = false;
+    recognition.onresult = e => {
+      document.getElementById('chatInput').value = e.results[0][0].transcript;
+      micActive = false; btn.classList.remove('recording'); btn.textContent = '🎙️';
+    };
+    recognition.onerror = () => { micActive = false; btn.classList.remove('recording'); btn.textContent = '🎙️'; };
+    recognition.onend = () => { micActive = false; btn.classList.remove('recording'); btn.textContent = '🎙️'; };
+    recognition.start();
+    micActive = true; btn.classList.add('recording'); btn.textContent = '⏹️';
+  } else {
+    if(recognition) recognition.stop();
+    micActive = false; btn.classList.remove('recording'); btn.textContent = '🎙️';
+  }
+}
+
+// ======= PRONUNCIATION =======
+function setPronunWord(el, idx) {
+  document.querySelectorAll('#section-pronun .cat-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  const pw = pronunWords[idx];
+  document.getElementById('pronunWord').textContent = pw.word;
+  document.getElementById('pronunIpa').textContent = pw.ipa;
+  document.getElementById('pronunTip').textContent = pw.tip;
+  document.getElementById('phonemeRow').innerHTML = pw.phonemes.map(p => `<div class="phoneme" onclick="speakPhoneme('${p}')">${p}</div>`).join('');
+  document.getElementById('scoreDisplay').style.display = 'none';
+}
+function speakPhoneme(w) { speak(w, 'fr-FR'); }
+function speakPronunWord() {
+  const w = document.getElementById('pronunWord').textContent;
+  speak(w, 'fr-FR');
+}
+let waveInterval;
+function toggleRecord() {
+  const btn = document.getElementById('recordBtn');
+  if(!isRecording) {
+    isRecording = true; btn.classList.add('on'); btn.textContent = '⏹️ Arrêter';
+    animateWave(true);
+    setTimeout(() => {
+      isRecording = false; btn.classList.remove('on'); btn.textContent = '🎙️ Enregistrer';
+      animateWave(false);
+      const score = Math.floor(Math.random() * 25) + 70;
+      const feedbacks = ['Excellent ! Ton accent est très naturel !', 'Bien ! Travaille un peu la nasalité.', 'Bon effort ! Continue à pratiquer !', 'Presque parfait !'];
+      document.getElementById('scoreNum').textContent = score + '%';
+      document.getElementById('scoreNum').style.color = score >= 80 ? 'var(--green)' : score >= 65 ? 'var(--accent)' : 'var(--accent2)';
+      document.getElementById('scoreFeedback').textContent = feedbacks[Math.floor(Math.random()*feedbacks.length)];
+      document.getElementById('scoreDisplay').style.display = 'flex';
+      addXP(5);
+    }, 3000);
+  } else {
+    isRecording = false; btn.classList.remove('on'); btn.textContent = '🎙️ Enregistrer';
+    animateWave(false);
+  }
+}
+function animateWave(on) {
+  clearInterval(waveInterval);
+  const bars = document.querySelectorAll('.wave-bar');
+  if(!on) { bars.forEach((b,i)=>{ const h=[10,20,35,22,40,15,28,38,12,25,42,18]; b.style.height=h[i]+'px'; }); return; }
+  waveInterval = setInterval(() => { bars.forEach(b => b.style.height = (Math.random()*38+6)+'px'); }, 120);
+}
+
+// ======= GRAMMAR =======
+function setGrammarTopic(el, idx) {
+  document.querySelectorAll('#section-grammar .cat-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  currentGrammarTopic = idx;
+  const t = grammarTopics[idx];
+  const card = document.getElementById('grammarCard');
+  card.querySelector('h2').textContent = t.title;
+  card.querySelector('.grammar-sub').textContent = t.subtitle;
+  card.querySelector('.rule-box').innerHTML = t.rule;
+  const exList = card.querySelector('#grammarExamples');
+  exList.innerHTML = t.examples.map(e => `<li>${e.fr} <span>${e.es}</span></li>`).join('');
+  const fill = card.querySelector('#fillBlank');
+  fill.innerHTML = t.blanks.map((b,i) => {
+    const parts = b.q.split('___');
+    return `<div class="blank-question">${parts[0]}<input class="blank-input" data-answer="${b.a}" placeholder="???" inputmode="text"> ${parts[1]||''}</div>`;
+  }).join('');
+  document.getElementById('grammarResult').textContent = '';
+}
+function checkGrammar() {
+  const inputs = document.querySelectorAll('.blank-input');
+  let correct = 0;
+  inputs.forEach(inp => {
+    const answer = inp.value.trim().toLowerCase();
+    const expected = inp.dataset.answer.toLowerCase();
+    if(answer === expected) { inp.classList.add('correct'); inp.classList.remove('wrong'); correct++; }
+    else { inp.classList.add('wrong'); inp.classList.remove('correct'); }
+  });
+  const total = inputs.length;
+  const res = document.getElementById('grammarResult');
+  if(correct === total) { res.innerHTML = `<span style="color:var(--green)">✅ Parfait ! ${correct}/${total} — Tu maîtrises ce point !</span>`; addXP(20); }
+  else { res.innerHTML = `<span style="color:var(--accent)">💪 ${correct}/${total} — Révise les cases en rouge !</span>`; addXP(5*correct); }
+}
+
+// ======= READING =======
+function loadReading(idx) {
+  currentReadingIdx = idx;
+  const rt = readingTexts[idx];
+  document.getElementById('readingLevel').textContent = rt.level;
+  document.getElementById('readingTitle').textContent = rt.title;
+  document.getElementById('readingText').innerHTML = rt.text;
+  document.getElementById('quizSection').style.display = 'none';
+  document.getElementById('quizFeedback').textContent = '';
+  document.querySelectorAll('.reading-body .highlight').forEach(el => {
+    el.addEventListener('click', e => showTooltip(e, el.dataset.word, el.dataset.trans, el.dataset.ex));
+  });
+}
+function setReadingText(el, idx) {
+  document.querySelectorAll('#section-reading .cat-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  loadReading(idx);
+}
+function readAloud() {
+  const text = readingTexts[currentReadingIdx].text.replace(/<[^>]+>/g,'');
+  speak(text, 'fr-FR');
+  addXP(5);
+}
+function showQuiz() {
+  const q = readingTexts[currentReadingIdx].quiz;
+  document.getElementById('quizSection').style.display = 'block';
+  document.getElementById('quizQuestion').textContent = q.q;
+  document.getElementById('quizOptions').innerHTML = q.opts.map((o,i) => `<button class="quiz-opt" onclick="answerQuiz(this,${i},${q.correct})">${o}</button>`).join('');
+  document.getElementById('quizFeedback').textContent = '';
+}
+function answerQuiz(el, chosen, correct) {
+  document.querySelectorAll('.quiz-opt').forEach(b => b.style.pointerEvents='none');
+  if(chosen === correct) {
+    el.classList.add('correct');
+    document.getElementById('quizFeedback').innerHTML='<span style="color:var(--green)">✅ Correct ! Excellente compréhension !</span>';
+    addXP(15);
+  } else {
+    el.classList.add('wrong');
+    document.querySelectorAll('.quiz-opt')[correct].classList.add('correct');
+    document.getElementById('quizFeedback').innerHTML='<span style="color:var(--accent2)">❌ La bonne réponse est en vert.</span>';
+    addXP(2);
+  }
+}
+
+// ======= TOOLTIP =======
+function showTooltip(e, word, trans, ex) {
+  const tip = document.getElementById('tooltipPopup');
+  document.getElementById('tipWord').textContent = word;
+  document.getElementById('tipTrans').textContent = '🇪🇸 ' + trans;
+  document.getElementById('tipEx').textContent = ex ? '💬 ' + ex : '';
+  tip.style.display = 'block';
+  const x = Math.min(e.clientX - 10, window.innerWidth - 230);
+  const y = Math.min(e.clientY + 16, window.innerHeight - 100);
+  tip.style.left = Math.max(10, x) + 'px';
+  tip.style.top = y + 'px';
+  speak(word, 'fr-FR');
+  setTimeout(() => tip.style.display = 'none', 3500);
+}
+document.addEventListener('click', e => {
+  if(!e.target.classList.contains('highlight')) document.getElementById('tooltipPopup').style.display='none';
+});
+
+// ======= INIT =======
+updateCard();
+window.speechSynthesis?.addEventListener('voiceschanged', ()=>{});
+</script>
+</body>
+</html>
